@@ -1,0 +1,6 @@
+{
+  "name": "QR Code Generator",
+  "description": "Create instant, downloadable high-resolution QR codes for any URL with vector SVG, ultra-HD PNG exports, custom styling, and error correction.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
