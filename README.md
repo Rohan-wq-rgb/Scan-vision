@@ -30,7 +30,7 @@ A modern, fast, client-side web application to generate downloadable, high-resol
 
 ### Prerequisites
 
-- Node.js 18+ or 20+
+- Node.js 24+
 - npm, yarn, or pnpm
 
 ### Installation
