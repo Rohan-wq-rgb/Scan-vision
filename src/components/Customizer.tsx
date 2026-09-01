@@ -54,6 +54,26 @@ export const Customizer: React.FC<CustomizerProps> = ({ config, onChange }) => {
     }
   };
 
+  const handleSelectFrame = (style: FrameStyle) => {
+    let newText = config.frameText;
+    const isDefaultText = !config.frameText || 
+      config.frameText === 'SCAN ME' || 
+      config.frameText === 'VISIT US' || 
+      config.frameText === 'SCAN TO OPEN' ||
+      config.frameText === 'SCAN CODE';
+
+    if (style === 'visit-us' && isDefaultText) {
+      newText = 'VISIT US';
+    } else if (style === 'scan-me' && isDefaultText) {
+      newText = 'SCAN ME';
+    } else if (style === 'minimal-card' && isDefaultText) {
+      newText = 'SCAN TO OPEN';
+    } else if (style === 'vintage-badge' && isDefaultText) {
+      newText = 'SCAN CODE';
+    }
+    onChange({ frameStyle: style, frameText: newText });
+  };
+
   const handleReset = () => {
     onChange({
       fgColor: '#ffffff',
@@ -272,7 +292,7 @@ export const Customizer: React.FC<CustomizerProps> = ({ config, onChange }) => {
             <button
               key={frame.id}
               type="button"
-              onClick={() => onChange({ frameStyle: frame.id as FrameStyle })}
+              onClick={() => handleSelectFrame(frame.id as FrameStyle)}
               className={`p-2 rounded-xl border text-xs font-bold transition-all ${
                 config.frameStyle === frame.id
                   ? 'border-[#00d1ff] bg-[#00d1ff]/10 text-[#00d1ff] ring-1 ring-[#00d1ff]/40'

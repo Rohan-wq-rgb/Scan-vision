@@ -166,10 +166,7 @@ export const QrPreview: React.FC<QrPreviewProps> = ({ config, onDownloadSuccess 
             <button
               key={fmt}
               type="button"
-              onClick={() => {
-                setSelectedFormat(fmt);
-                handleDownload(fmt);
-              }}
+              onClick={() => setSelectedFormat(fmt)}
               className={`py-1.5 text-xs font-bold uppercase rounded-lg transition-all ${
                 selectedFormat === fmt
                   ? 'bg-[#1a1a1a] text-[#00d1ff] border border-[#00d1ff]/40 shadow-xs'

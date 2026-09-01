@@ -74,7 +74,12 @@ export async function renderQrToCanvas(
 
   // Determine frame padding if framed
   const hasFrame = config.frameStyle !== 'none';
-  const frameText = config.frameText || (config.frameStyle === 'scan-me' ? 'SCAN ME' : 'VISIT US');
+  let defaultFrameText = 'SCAN ME';
+  if (config.frameStyle === 'visit-us') defaultFrameText = 'VISIT US';
+  else if (config.frameStyle === 'minimal-card') defaultFrameText = 'SCAN TO OPEN';
+  else if (config.frameStyle === 'vintage-badge') defaultFrameText = 'SCAN CODE';
+
+  const frameText = config.frameText?.trim() || defaultFrameText;
   
   // Calculate sizing
   let canvasWidth = targetResolution;
@@ -236,6 +241,22 @@ export async function renderQrToCanvas(
     }
   }
 
+function getContrastingTextColor(hexColor: string, defaultFallback: string = '#000000'): string {
+  try {
+    const cleanHex = hexColor.replace('#', '');
+    if (cleanHex.length === 6) {
+      const r = parseInt(cleanHex.substring(0, 2), 16);
+      const g = parseInt(cleanHex.substring(2, 4), 16);
+      const b = parseInt(cleanHex.substring(4, 6), 16);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance > 0.55 ? '#000000' : '#ffffff';
+    }
+  } catch {
+    // fallback
+  }
+  return defaultFallback;
+}
+
   // Draw Frame / Banner text
   if (hasFrame && bottomBannerHeight > 0) {
     ctx.save();
@@ -245,7 +266,7 @@ export async function renderQrToCanvas(
     ctx.textBaseline = 'middle';
 
     if (config.frameStyle === 'scan-me' || config.frameStyle === 'visit-us') {
-      const pillWidth = Math.min(canvasWidth * 0.82, ctx.measureText(frameText.toUpperCase()).width + fontSize * 2.4);
+      const pillWidth = Math.min(canvasWidth * 0.86, ctx.measureText(frameText.toUpperCase()).width + fontSize * 2.6);
       const pillHeight = Math.round(fontSize * 1.7);
       const pillX = (canvasWidth - pillWidth) / 2;
       const pillY = targetResolution + (bottomBannerHeight - pillHeight) / 2;
@@ -256,8 +277,8 @@ export async function renderQrToCanvas(
       drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, pillRadius);
       ctx.fill();
 
-      // Draw text
-      ctx.fillStyle = config.bgColor === '#ffffff' || !config.isTransparentBg ? config.bgColor : '#ffffff';
+      // Draw text with calculated contrast against pill background
+      ctx.fillStyle = getContrastingTextColor(config.fgColor, '#000000');
       ctx.fillText(frameText.toUpperCase(), canvasWidth / 2, pillY + pillHeight / 2);
     } else if (config.frameStyle === 'minimal-card') {
       ctx.fillStyle = config.fgColor;
